@@ -48,7 +48,5 @@ pip install -r requirements.txt
 pip freeze > requirements.txt
 ```
 
-Дальнейшие шаги
----------------
-Инструкции будут дополнены в ходе хакатона...
+tbc...
 
