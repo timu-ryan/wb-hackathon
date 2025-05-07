@@ -1,0 +1,6 @@
+# Python
+ml/env_ml/
+ml/.venv/
+
+# данные ??
+ml/data/
