@@ -1,6 +1,6 @@
 # Python
-ml/env_ml/
-ml/venv/
+ml/catboost_info
+.venv/
 
 # Данные
-ml/data/
+ml/data
