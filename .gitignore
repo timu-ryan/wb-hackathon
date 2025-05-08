@@ -1,6 +1,7 @@
 # Python
 ml/catboost_info
-.venv/
+ml/venv
+./venv
 
 # Данные
 ml/data
