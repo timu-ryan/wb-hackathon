@@ -1,0 +1,56 @@
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+import joblib
+import os
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+scaler = joblib.load(os.path.join(CURRENT_DIR, 'preprocessing_files/scaler.pkl'))
+encoder = joblib.load(os.path.join(CURRENT_DIR, 'preprocessing_files/encoder.pkl'))
+
+
+# REQUIRED_COLUMNS = []
+NUMERICAL_COLUMNS = ['total_ordered', 'count_items', 'unique_items', 
+                     'avg_unique_purchase', 'nm_age', 'distance', 
+                     'days_after_registration', 'number_of_orders', 
+                     'number_of_ordered_items', 'mean_number_of_ordered_items', 
+                     'min_number_of_ordered_items', 'max_number_of_ordered_items', 
+                     'mean_percent_of_ordered_items'] 
+CATEGORICAL_COLUMNS = ["is_paid", "is_courier", "service", "payment_type"]
+
+def preprocess(df: pd.DataFrame) -> pd.DataFrame:
+    # Проверить наличие всех нужных колонок
+    # if not all(col in df.columns for col in REQUIRED_COLUMNS):
+        # missing = list(set(REQUIRED_COLUMNS) - set(df.columns))
+        # raise ValueError(f"Missing columns: {missing}")
+    
+    # df = df[REQUIRED_COLUMNS]
+
+    columns = list(df.columns)
+
+    # Последовательное переименование каждого столбца в snake case
+    for i, column in enumerate(columns):
+        columns[i] = ''.join(['_' + i.lower() if i.isupper() else i for i in column]).lstrip('_')
+
+    df.columns = columns
+
+    # Преобразование столбца со временем в datetime
+    df['created_date'] = pd.to_datetime(df['created_date'])
+
+    df['day'] = df['created_date'].dt.day
+    df['hour'] = df['created_date'].dt.hour
+    df['weekday'] = df['created_date'].dt.weekday
+
+
+    data_num_scaled = scaler.transform(df[NUMERICAL_COLUMNS])
+    data_num_scaled_df = pd.DataFrame(data_num_scaled, columns=NUMERICAL_COLUMNS)
+    df = pd.concat([df.drop(NUMERICAL_COLUMNS, axis=1), 
+                                  data_num_scaled_df], axis=1)
+
+    data_cat_encoded = encoder.transform(df[CATEGORICAL_COLUMNS])
+    data_cat_encoded_df = pd.DataFrame(data_cat_encoded, 
+                                       columns=encoder.get_feature_names_out(CATEGORICAL_COLUMNS))
+    df = pd.concat([df.drop(CATEGORICAL_COLUMNS, axis=1), 
+                                  data_num_scaled_df], axis=1)
+    
+    return df
