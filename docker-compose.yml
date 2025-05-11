@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./fraud_detection_api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fraud_detection_api/app/models:/app/models
+      - ./fraud_detection_api/app/preprocessing:/app/preprocessing_files
+    environment:
+      - APP_ENV=production
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
