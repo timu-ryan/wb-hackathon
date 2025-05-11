@@ -2,6 +2,7 @@
 ml/catboost_info
 ml/venv
 ./venv
+api_venv
 
 # Данные
 ml/data
