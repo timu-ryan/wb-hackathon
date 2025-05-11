@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import joblib
 import os
@@ -90,6 +91,14 @@ app = FastAPI(
     title="Fraud Order Detection API",
     description="API for detecting fraudulent orders aimed at stock blocking",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Для разработки
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
